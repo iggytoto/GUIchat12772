@@ -1,9 +1,13 @@
 package com.example.gui_chat12772;
 
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -16,7 +20,8 @@ import java.net.Socket;
 
 public class HelloController {
     @FXML
-    public TextArea listBox;
+    public VBox usersBox;
+    //public TextArea listBox;
     @FXML
     private TextField textField;
     @FXML
@@ -27,14 +32,17 @@ public class HelloController {
     private Button connectBtn;*/
     private DataOutputStream out;
     private Thread thread;
-
+    private int toId = 0;
     @FXML
     protected void onSendHandler() {
         try {
+            JSONObject jsonObject = new JSONObject();
             String msg = textField.getText();
+            jsonObject.put("msg", msg);
+            jsonObject.put("to_id", toId);
             messageBox.appendText("me>: "+msg+"\n");
             textField.clear();
-            out.writeUTF(msg);
+            out.writeUTF(jsonObject.toJSONString());
             textField.requestFocus();   // переведем фокус в поле ввода
         } catch (NullPointerException e) {
 //            throw new RuntimeException(e);
@@ -44,7 +52,6 @@ public class HelloController {
             throw new RuntimeException(e);
         }
     }
-
     @FXML
     protected void onConnect(){
         try {
@@ -65,10 +72,22 @@ public class HelloController {
                             messageBox.appendText(msg + "\n");
                         } else if (jsonObject.containsKey("onlineUsers")) {
                             JSONArray jsonArray = (JSONArray) jsonObject.get("onlineUsers");
-                            listBox.clear();
-                            jsonArray.forEach(user->{
-                                listBox.appendText(user + "\n");
+                            Platform.runLater(()->{
+                                usersBox.getChildren().clear();
+                                jsonArray.forEach(user->{
+                                    JSONObject jsonUser = (JSONObject) user; // уточняем, что user это JSONObject
+                                    Button userBtn = new Button();
+                                    userBtn.setText(jsonUser.get("name").toString());
+                                    userBtn.setPrefWidth(200);
+                                    userBtn.setOnAction((e)->{
+                                        toId = Integer.parseInt(jsonUser.get("id").toString()); // Кто получатель
+                                        messageBox.clear();
+                                    });
+                                    usersBox.getChildren().add(userBtn);
+                                    //listBox.appendText(user + "\n");
+                                });
                             });
+                            //listBox.clear();
                         }
                     }
                 }catch (IOException e){

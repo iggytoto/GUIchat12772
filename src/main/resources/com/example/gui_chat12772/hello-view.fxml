@@ -6,7 +6,8 @@
 <HBox xmlns="http://javafx.com/javafx/17.0.2-ea"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.gui_chat12772.HelloController">
-    <TextArea prefWidth="200" prefHeight="400" fx:id="listBox"/>
+    <!--<TextArea prefWidth="200" prefHeight="400" fx:id="listBox"/>-->
+    <VBox prefWidth="200" prefHeight="400" fx:id="usersBox"/>
     <VBox prefHeight="400" prefWidth="300" alignment="CENTER">
         <TextArea editable="false" prefHeight="350" prefWidth="300" fx:id="messageBox"/>
         <HBox prefHeight="25" prefWidth="300">
