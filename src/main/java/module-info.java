@@ -7,4 +7,6 @@ module com.example.gui_chat12772 {
 
     opens com.example.gui_chat12772 to javafx.fxml;
     exports com.example.gui_chat12772;
+    exports examples;
+    opens examples to javafx.fxml;
 }
